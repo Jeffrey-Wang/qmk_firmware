@@ -217,7 +217,7 @@ const rgb_matrix_f rgb_matrix_functions[6][2] = {
 #endif
 
 #ifdef ENCODER_ENABLE
-/**
+
 static pin_t encoders_pad_a[] = ENCODERS_PAD_A;
 #define NUMBER_OF_ENCODERS (sizeof(encoders_pad_a)/sizeof(pin_t))
 
@@ -242,32 +242,27 @@ const uint16_t PROGMEM encoders[][NUMBER_OF_ENCODERS * 2][2]  = {
         KC_VOLD, KC_VOLU,
         KC_VOLD, KC_VOLU
     )
-};**/
+};
 void encoder_update_user(uint8_t index, bool clockwise) {
   if (!is_keyboard_master())
     return;
-  uint8_t layer = biton32(layer_state);
-  if (layer == 0) {
-    if (index == 0) {
-      if (clockwise) {
-        tap_code(KC_RBRC);
-      } else {
-        tap_code(KC_LBRC);
-      }
-    } else {
-      if (clockwise) {
-        tap_code(KC_RIGHT);
-      } else {
-        tap_code(KC_LEFT);
-      }
+
+#ifdef RGB_OLED_MENU
+  if (index == RGB_OLED_MENU) {
+    (*rgb_matrix_functions[rgb_encoder_state][clockwise])();
+  } else
+#endif
+  {
+    uint8_t layer = biton32(layer_state);
+    uint16_t keycode = pgm_read_word(&encoders[layer][index][clockwise]);
+    while (keycode == KC_TRANSPARENT && layer > 0)
+    {
+      layer--;
+      if ((layer_state & (1 << layer)) != 0)
+          keycode = pgm_read_word(&encoders[layer][index][clockwise]);
     }
-  
-  } else {
-      if (clockwise) {
-        tap_code(KC_VOLD);
-      } else {
-        tap_code(KC_VOLU);
-      }
+    if (keycode != KC_TRANSPARENT)
+      tap_code16(keycode);
   }
 }
 #endif
