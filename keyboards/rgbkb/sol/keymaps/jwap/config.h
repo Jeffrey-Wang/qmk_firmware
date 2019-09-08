@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // place overrides here
 
 #define RGBLIGHT_SLEEP
+#define RGB_DISABLE_WHEN_USB_SUSPENDED true // turn off effects when suspended
 /**
 #define RGBLIGHT_HUE_STEP 293
 #define RGBLGIHT_SAT_STEP 153
@@ -31,3 +32,4 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define RGBLIGHT_LIMIT_VAL 235
 **/
 #define PERMISSIVE_HOLD
+#define TAP_CODE_DELAY 1
